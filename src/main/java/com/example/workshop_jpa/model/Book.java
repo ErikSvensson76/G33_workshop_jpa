@@ -1,10 +1,8 @@
 package com.example.workshop_jpa.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Book {
@@ -14,6 +12,16 @@ public class Book {
     private String isbn;
     private String title;
     private int maxLoanDays;
+    @ManyToMany(
+            cascade = {CascadeType.DETACH, CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},
+            fetch = FetchType.LAZY
+    )
+    @JoinTable(
+            name = "book_author",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
 
     public Book(int bookId, String isbn, String title, int maxLoanDays) {
         this.bookId = bookId;
@@ -51,6 +59,14 @@ public class Book {
 
     public void setMaxLoanDays(int maxLoanDays) {
         this.maxLoanDays = maxLoanDays;
+    }
+
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors;
     }
 
     @Override
